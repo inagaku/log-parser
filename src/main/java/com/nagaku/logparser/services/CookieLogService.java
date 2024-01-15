@@ -20,7 +20,7 @@ public class CookieLogService {
 
     public List<String> getMostActiveCookies(String filePath, OffsetDateTime dateOfDay) throws IOException {
         Map<String, Integer> cookieCountMap = new HashMap<>();
-        int maxCount = 0;
+        int maxCount = -1;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 
@@ -48,13 +48,14 @@ public class CookieLogService {
 
                 // We do not need to process logs for another day
                 if (cookieDate.truncatedTo(ChronoUnit.DAYS).isAfter(dateOfDay)) {
+                    line = reader.readLine();
                     continue;
-                }
+                } 
+                line = reader.readLine();
 
                 // Map <cookie, count>
                 cookieCountMap.put(logLine[0], cookieCountMap.getOrDefault(logLine[0], 0) + 1);
                 maxCount = Math.max(maxCount, cookieCountMap.get(logLine[0]));
-                line = reader.readLine();
             }
 
         }
